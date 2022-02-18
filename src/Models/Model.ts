@@ -3,7 +3,7 @@ export interface Player {
     DisplayName?: string;
     Sex: Sex;
     Age: number;
-    Weight: number;
+    Weight?: number;
     AvgSkills: number;
 }
 
@@ -26,4 +26,9 @@ export interface ExtendedPlayer extends Player {
     totalPerc: number;
     agePerc: number;
     skillPerc: number;
+}
+
+export interface PlayerListImport {
+    DisplayName?: string;
+    Players: Player[];
 }

@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { Player, PlayerList, Sex } from "../Models/Model";
+import { Player, PlayerList, PlayerListImport, Sex } from "../Models/Model";
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -21,8 +21,9 @@ import PlayerEdit from "./PlayerEdit";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { getRandomCode } from "../Helpers/Helpers";
+import { getRandomCode, saveTemplateAsFile } from "../Helpers/Helpers";
 import FilePickerControl from "./FilePickerControl";
+import Typography from '@mui/material/Typography';
 
 export interface PlayerListDialogProps {
     editList: PlayerList;
@@ -36,6 +37,7 @@ const PlayerListDialog: FC<PlayerListDialogProps> = ({ open, onSave, handleClose
     const [list, setList] = useState(editList);
     const [playerEditOpen, setPlayerEditOpen] = useState(false);
     const [selectedPlayer, setSelectedPlayer] = useState<Player>();
+    const [file, setFile] = useState<File>()
 
     const addEditPlayer = (code?: string) => {
         if (code) {
@@ -72,6 +74,35 @@ const PlayerListDialog: FC<PlayerListDialogProps> = ({ open, onSave, handleClose
         const newList = { ...list, DisplayName: val };
         setList(newList);
     }
+
+    const onFileChanged = async (newFile?: File) => {
+        setFile(newFile);
+        if (newFile) {
+            const playerListImport = JSON.parse(await newFile.text()) as PlayerListImport;
+            console.log(playerListImport);
+            let newList = { ...list };
+            if (playerListImport.DisplayName)
+                newList = { ...newList, DisplayName: playerListImport.DisplayName };
+            // await onChangeCode(playerListImport.DisplayName);
+            let newPlayers = { ...newList.Players }
+            for (let index = 0; index < playerListImport.Players.length; index++) {
+                const player = playerListImport.Players[index];
+                player.Code = player.Code ? player.Code : getRandomCode();
+                newPlayers[player.Code] = player;
+                // await onSavePlayer(player)
+            }
+            newList = { ...newList, Players: newPlayers };
+            setList(newList);
+        }
+    }
+
+    const onExportClicked = () => {
+        if (list.DisplayName && list.DisplayName !== "" && Object.values(list.Players).length !== 0) {
+            const playerListExport: PlayerListImport = { Players: [], DisplayName: list.DisplayName };
+            Object.values(list.Players).forEach(p => playerListExport.Players.push(p));
+            saveTemplateAsFile(list.DisplayName + ".json", playerListExport);
+        }
+    }
     return <div>
         <Dialog
             fullScreen={fullScreen}
@@ -80,18 +111,21 @@ const PlayerListDialog: FC<PlayerListDialogProps> = ({ open, onSave, handleClose
             aria-labelledby="responsive-dialog-title"
         >
             <DialogTitle id="responsive-dialog-title">
-                <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="end"
-                    spacing={2}
-                >
-                    {"Player list"}
-                    {(Object.values(list.Players).length === 0) && <FilePickerControl />}
-                </Stack>
-            </DialogTitle>
-            <DialogContent>
-                <Stack spacing={2}>
+                <Stack>
+                    <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="end"
+                        spacing={2}
+                    >
+                        {"Player list"}
+                        <Stack direction="row" spacing={1}>
+                            <FilePickerControl file={file} onFilePicker={onFileChanged} />
+                            {Object.values(list.Players).length !== 0 &&
+                                <Button variant="outlined" size="small" onClick={_e => onExportClicked()}>Export</Button>
+                            }
+                        </Stack>
+                    </Stack>
                     <Stack
                         direction="row"
                         justifyContent="space-between"
@@ -108,10 +142,17 @@ const PlayerListDialog: FC<PlayerListDialogProps> = ({ open, onSave, handleClose
                             onChange={(v) => onChangeCode(v.target.value)}
                             value={list?.DisplayName}
                         />
-                        <Button variant="outlined" size="small" onClick={() => addEditPlayer()} startIcon={<AddIcon />}>
-                            Add player
-                        </Button>
+                        <Stack direction="row" spacing={1} alignItems="end">
+                            <Typography>Count: {Object.values(list.Players).length}</Typography>
+                            <Button variant="outlined" size="small" onClick={() => addEditPlayer()} startIcon={<AddIcon />}>
+                                Add player
+                            </Button>
+                        </Stack>
                     </Stack>
+                </Stack>
+            </DialogTitle>
+            <DialogContent>
+                <Stack spacing={2}>
                     <TableContainer component={Paper}>
                         <Table size="small" aria-label="a dense table">
                             <TableHead>
@@ -163,11 +204,13 @@ const PlayerListDialog: FC<PlayerListDialogProps> = ({ open, onSave, handleClose
                 </Button>
             </DialogActions>
         </Dialog>
-        {playerEditOpen && <PlayerEdit
-            handleClose={onClosePlayerEdit}
-            onSave={onSavePlayer}
-            open={playerEditOpen}
-            editplayer={selectedPlayer!} />}
-    </div>
+        {
+            playerEditOpen && <PlayerEdit
+                handleClose={onClosePlayerEdit}
+                onSave={onSavePlayer}
+                open={playerEditOpen}
+                editplayer={selectedPlayer!} />
+        }
+    </div >
 }
 export default PlayerListDialog;

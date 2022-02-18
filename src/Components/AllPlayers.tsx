@@ -123,6 +123,7 @@ const AllPlayers: FC = () => {
         handleClose();
     }
     const onDelete = async (list: PlayerList) => {
+        setChecked(undefined);
         const newLists = { ...existingLists };
         delete newLists[list.Code];
         await setInLocalStorage(listsKey, newLists);

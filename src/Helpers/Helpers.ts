@@ -42,15 +42,6 @@ export function shuffle<T>(array: T[]) {
     return array;
 }
 
-// export const GenerateNRandomNumbersBetween = (N: number, max: number, min: number = 0) => {
-//     const orderNumbers = new Set<number>();
-//     while (orderNumbers.size !== N) {
-//         const random = getRandomNumberBetweenRange(max, min);
-//         orderNumbers.add(random);
-//     }
-//     return orderNumbers;
-// }
-
 export function getNByAverage<T>(allValues: T[], N: number, getterToSum: (val: T) => number, objPercentage: number, allowedPerc = 5, howManyPasses = 1000) {
 }
 
@@ -62,21 +53,6 @@ export function NotAlreadyPresent<T, K>(toSearch: T[], toSearchAgainst: T[][], g
     return toSearch.every(p => toSearchAgainst.flat().findIndex(alreadyP => getter(alreadyP) === getter(p)) === -1)
 }
 
-// export function getMin<V>(arr: Array<V>, elementGetter: (input: V) => number) {
-//     if (arr && arr.length > 0) {
-//         let min = elementGetter(arr[0]);
-//         let minIndex = 0;
-//         for (let i = 1, len = arr.length; i < len; i++) {
-//             let v = elementGetter(arr[i]);
-//             if (v < min) {
-//                 min = v;
-//                 minIndex = i;
-//             }
-//         }
-//         const val = arr[minIndex];
-//         return { val, min };
-//     }
-// }
 
 export function permute<T>(array: T[], k: number) {
     try {
@@ -126,5 +102,23 @@ export function permute<T>(array: T[], k: number) {
     } catch (error) {
         console.error(error);
     }
-
 }
+
+
+export const saveTemplateAsFile = (filename: string, dataObjToWrite: any) => {
+    const blob = new Blob([JSON.stringify(dataObjToWrite)], { type: "text/json" });
+    const link = document.createElement("a");
+
+    link.download = filename;
+    link.href = window.URL.createObjectURL(blob);
+    link.dataset.downloadurl = ["text/json", link.download, link.href].join(":");
+
+    const evt = new MouseEvent("click", {
+        view: window,
+        bubbles: true,
+        cancelable: true,
+    });
+
+    link.dispatchEvent(evt);
+    link.remove()
+};

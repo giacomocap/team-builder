@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+import Chip from "@mui/material/Chip";
 import { useEffect, useRef, useState } from "react";
 
 export interface FilePickerProps {
@@ -36,15 +36,11 @@ export const FilePickerControl = (props: FilePickerProps) => {
         flexWrap: 'wrap', display: 'flex',
     }}>
         {selectedFile && selectedFile.size > 0 ?
+            <Chip label={selectedFile.name} onDelete={onClickDelete} />
+            :
             <>
-                <Button variant="outlined" onClick={onClickDelete}>Delete</Button>
-                <Typography variant="body1" component="div">
-                    {selectedFile.name}
-                </Typography>
-            </> :
-            <>
-                <input type="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" name="inputfile" multiple={false} hidden ref={inputRef} onChange={(e) => { onClick(e.target.files); e.target.files = null; }} id="inputfile" />
-                <Button variant="outlined" onClick={_e => inputRef?.current?.click()}>Import from</Button>
+                <input type="file" accept=".json,application/JSON" name="inputfile" multiple={false} hidden ref={inputRef} onChange={(e) => { onClick(e.target.files); e.target.files = null; }} id="inputfile" />
+                <Button variant="outlined" size="small" onClick={_e => inputRef?.current?.click()}>Import</Button>
             </>}
     </Box>
 }

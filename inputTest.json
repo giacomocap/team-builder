@@ -1,0 +1,78 @@
+{
+    "DisplayName": "TestImport",
+    "Players": [
+        {
+            "DisplayName": "Mattia",
+            "Age": 16,
+            "AvgSkills": 1,
+            "Sex": 0,
+            "Weight": 0
+        },{
+            "DisplayName": "Camilla",
+            "Age": 16,
+            "AvgSkills": 1,
+            "Sex": 1,
+            "Weight": 0
+        },{
+            "DisplayName": "Emma",
+            "Age": 16,
+            "AvgSkills": 1,
+            "Sex": 1,
+            "Weight": 0
+        },{
+            "DisplayName": "Anna",
+            "Age": 16,
+            "AvgSkills": 1,
+            "Sex": 1,
+            "Weight": 0
+        },{
+            "DisplayName": "Emily",
+            "Age": 16,
+            "AvgSkills": 1,
+            "Sex": 1,
+            "Weight": 0
+        },{
+            "DisplayName": "Benedetta",
+            "Age": 16,
+            "AvgSkills": 1,
+            "Sex": 1,
+            "Weight": 0
+        },{
+            "DisplayName": "Nicolò",
+            "Age": 16,
+            "AvgSkills": 1,
+            "Sex": 0,
+            "Weight": 0
+        },{
+            "DisplayName": "Dimitri",
+            "Age": 16,
+            "AvgSkills": 1,
+            "Sex": 0,
+            "Weight": 0
+        },{
+            "DisplayName": "Diego",
+            "Age": 15,
+            "AvgSkills": 1,
+            "Sex": 0,
+            "Weight": 0
+        },{
+            "DisplayName": "Riccardo",
+            "Age": 15,
+            "AvgSkills": 1,
+            "Sex": 0,
+            "Weight": 0
+        },{
+            "DisplayName": "Andrea",
+            "Age": 15,
+            "AvgSkills": 1,
+            "Sex": 0,
+            "Weight": 0
+        },{
+            "DisplayName": "Tommaso Collauto",
+            "Age": 15,
+            "AvgSkills": 1,
+            "Sex": 0,
+            "Weight": 0
+        }
+    ]
+}

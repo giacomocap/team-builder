@@ -17,15 +17,15 @@ class TeamDisplay extends PureComponent<TeamDisplayProp, {}> {
                 flexWrap: 'wrap', display: 'flex',
             }}>
                 {Object.values(this.props.generatedTeams).map(team =>
-                    <Stack sx={{
+                    <Stack key={"team" + team.Index} sx={{
                         p: 1,
                         m: 1,
                     }} spacing={2}>
                         <Typography variant="h5" component="div">
-                            Team {team.Index}
+                            Team {team.Index + 1}
                         </Typography>
                         {Object.values(team.Players).map(p =>
-                            <Typography variant="body1" component="div">
+                            <Typography key={"player" + p.Code} variant="body1" component="div">
                                 {p.DisplayName} - {(p.Sex === Sex.Male ? "M" : "F")} - {p.totalPerc.toFixed(2)}
                             </Typography>
                         )}
