@@ -77,7 +77,8 @@ export function permute<T>(array: T[], k: number) {
                     subresult.push(array[i]);
                 }
             }
-            result.push(subresult);
+            if (subresult.length > 0)
+                result.push(subresult);
 
             // get next permutation
             for (var i = array.length - 1; i > 0; i--) {

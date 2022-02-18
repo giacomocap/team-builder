@@ -81,8 +81,7 @@ const TeamMaker = ({ list }: TeamMakerProps) => {
         const avgFemaleSkill = femaleSkill / female.length;
         const avgTeamSkill = (avgMaleSkill + avgFemaleSkill) / 2;
         setAvgTeamSkill(avgTeamSkill);
-        // const peopleForTeam = Math.floor(mappedSkills.length / teamNumber);
-        // let howManyOut = mappedSkills.length % teamNumber;
+        
         const maleForTeam = Math.floor(male.length / teamNumber);
         let malehowManyOut = male.length % teamNumber;
         const femaleForTeam = Math.floor(female.length / teamNumber);
@@ -101,28 +100,57 @@ const TeamMaker = ({ list }: TeamMakerProps) => {
         let allAllowedMalePerm: ExtendedPlayer[][] = [];
         let allAllowedFemalePerm: ExtendedPlayer[][] = [];
 
+        
         let malePerc = 0;
-        if (male.length > 0) {
-            while (allAllowedMalePerm.length < teamNumber || (malehowManyOut > 0 ? allAllowedMaleOverPerm.length < teamNumber : false)) {
-                allAllowedMalePerm = allMalePerm.filter((value) => PercentageRemover(value, maxMaleAllowed, minMaleAllowed));
-                if (malehowManyOut > 0)
-                    allAllowedMaleOverPerm = allMaleOverPerm.filter((value) => PercentageRemover(value, maxMaleAllowed, minMaleAllowed));
-                if ((malehowManyOut > 0 ? allAllowedMaleOverPerm.length < teamNumber : false) || allAllowedMalePerm.length < teamNumber)
+        
+        if (allMalePerm.length > 0) {
+            while (allAllowedMalePerm.length < teamNumber) {
+                allAllowedMalePerm = allMalePerm.length > 0 ? allMalePerm.filter((value) => PercentageRemover(value, maxMaleAllowed, minMaleAllowed)) : allMalePerm;
+                if (allAllowedMalePerm.length < teamNumber)
                     [maxMaleAllowed, minMaleAllowed] = getPercentages(avgMaleSkill, allowedPerc + malePerc++);
             }
+        } else {
+            allAllowedMalePerm = allMalePerm;
         }
+        malePerc = 0;
+        if (allMaleOverPerm.length > 0) {
+            [maxMaleAllowed, minMaleAllowed] = getPercentages(avgMaleSkill, allowedPerc + malePerc++);
+            while (malehowManyOut > 0 ? allAllowedMaleOverPerm.length < malehowManyOut : false) {
+                allAllowedMaleOverPerm = allMaleOverPerm.length > 0 ? allMaleOverPerm.filter((value) => PercentageRemover(value, maxMaleAllowed, minMaleAllowed)) : allMaleOverPerm;
+                if (allAllowedMaleOverPerm.length < malehowManyOut) {
+                    [maxMaleAllowed, minMaleAllowed] = getPercentages(avgMaleSkill, allowedPerc + malePerc++);
+                }
+            }
+        } else {
+            allAllowedMaleOverPerm = allMaleOverPerm
+        }
+        
 
 
         let femalePerc = 0;
-        if (female.length > 0) {
-            while (allAllowedFemalePerm.length < teamNumber || (femalehowManyOut > 0 ? allAllowedFemaleOverPerm.length < teamNumber : false)) {
+        
+        if (allFemalePerm.length > 0) {
+            while (allAllowedFemalePerm.length < teamNumber) {
                 allAllowedFemalePerm = allFemalePerm.filter((value) => PercentageRemover(value, maxFemaleAllowed, minFemaleAllowed));
-                if (femalehowManyOut > 0)
-                    allAllowedFemaleOverPerm = allFemaleOverPerm.filter((value) => PercentageRemover(value, maxFemaleAllowed, minFemaleAllowed));
-                if ((femalehowManyOut > 0 ? allAllowedFemaleOverPerm.length < teamNumber : false) || allAllowedFemalePerm.length < teamNumber)
+
+                if (allAllowedFemalePerm.length < teamNumber)
                     [maxFemaleAllowed, minFemaleAllowed] = getPercentages(avgFemaleSkill, allowedPerc + femalePerc++);
             }
+        } else { allAllowedFemalePerm = allFemalePerm; }
+
+        femalePerc = 0;
+        if (allFemaleOverPerm.length > 0) {
+            [maxFemaleAllowed, minFemaleAllowed] = getPercentages(avgFemaleSkill, allowedPerc + femalePerc++);
+            while (femalehowManyOut > 0 ? allAllowedFemaleOverPerm.length < femalehowManyOut : false) {
+                allAllowedFemaleOverPerm = allFemaleOverPerm.filter((value) => PercentageRemover(value, maxFemaleAllowed, minFemaleAllowed));
+
+                if (femalehowManyOut > 0 ? allAllowedFemaleOverPerm.length < femalehowManyOut : false)
+                    [maxFemaleAllowed, minFemaleAllowed] = getPercentages(avgFemaleSkill, allowedPerc + femalePerc++);
+            }
+        } else {
+            allAllowedFemaleOverPerm = allFemaleOverPerm;
         }
+        
         let maleFound = male.length === 0 ? true : false;
         let whileMale = 0;
         const codeGetter = function (v: ExtendedPlayer) { return v.Code };
@@ -147,7 +175,7 @@ const TeamMaker = ({ list }: TeamMakerProps) => {
                     nsquadWithoutRepetition[i] = squad;
                 }
             }
-            if (nsquadWithoutRepetition.every(t => t.length > 0)) {
+            if (nsquadWithoutRepetition.every(t => t.length > 0) || nsquadWithoutRepetition.filter(t => t.length > 0).length >= malehowManyOut) {
                 maleFound = true;
 
                 nsquadWithoutRepetition.forEach((team, i) => {
@@ -184,8 +212,7 @@ const TeamMaker = ({ list }: TeamMakerProps) => {
                     nsquadWithoutRepetition[i] = squad;
                 }
             }
-            if (nsquadWithoutRepetition.every(t => t.length > 0)) {
-                // console.log(nsquadWithoutRepetition);
+            if (nsquadWithoutRepetition.every(t => t.length > 0) || nsquadWithoutRepetition.filter(t => t.length > 0).length >= femalehowManyOut) {
                 femaleFound = true;
                 const longSquads = nsquadWithoutRepetition.map((e, i) => { return { i, length: e.length } }).filter(e => e.length === femaleForTeam + 1);
                 const shortSquads = nsquadWithoutRepetition.map((e, i) => { return { i, length: e.length } }).filter(e => e.length === femaleForTeam);

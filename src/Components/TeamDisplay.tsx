@@ -26,12 +26,9 @@ class TeamDisplay extends PureComponent<TeamDisplayProp, {}> {
                         </Typography>
                         {Object.values(team.Players).map(p =>
                             <Typography key={"player" + p.Code} variant="body1" component="div">
-                                {p.DisplayName} - {(p.Sex === Sex.Male ? "M" : "F")} - {p.totalPerc.toFixed(2)}
+                                {p.DisplayName} - {(p.Sex === Sex.Male ? "M" : "F")}
                             </Typography>
                         )}
-                        <Typography variant="h6" component="div">
-                            {team.AvgSkill.toFixed(2)}
-                        </Typography>
                     </Stack>
                 )}
             </Box>
