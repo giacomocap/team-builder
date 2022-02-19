@@ -87,7 +87,12 @@ const AllPlayers: FC = () => {
 
     const GetExistingLists = async () => {
         const existingLists = await getFromLocalStorage<{ [code: string]: PlayerList }>(listsKey) ?? {};
-        setExistingLists(existingLists);
+        const mine = existingLists["dhsdfsfbjkf"];
+        if (mine)
+            setExistingLists(existingLists);
+        else {
+            addEditList();
+        }
     }
 
     const addEditList = (code?: string) => {

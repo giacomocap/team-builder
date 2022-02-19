@@ -29,6 +29,7 @@ export interface ExtendedPlayer extends Player {
 }
 
 export interface PlayerListImport {
+    Code?: string;
     DisplayName?: string;
     Players: Player[];
 }

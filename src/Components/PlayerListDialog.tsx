@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Player, PlayerList, PlayerListImport, Sex } from "../Models/Model";
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -24,6 +24,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import { getRandomCode, saveTemplateAsFile } from "../Helpers/Helpers";
 import FilePickerControl from "./FilePickerControl";
 import Typography from '@mui/material/Typography';
+import { default as reparto } from '../../inputTest.json'
+import { getFromLocalStorage } from '../Helpers/LocalStorageHelpers';
 
 export interface PlayerListDialogProps {
     editList: PlayerList;
@@ -33,11 +35,24 @@ export interface PlayerListDialogProps {
 }
 const PlayerListDialog: FC<PlayerListDialogProps> = ({ open, onSave, handleClose, editList }) => {
     const theme = useTheme();
+    const [listsKey, _] = useState("team-builder-lists");
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
     const [list, setList] = useState(editList);
     const [playerEditOpen, setPlayerEditOpen] = useState(false);
     const [selectedPlayer, setSelectedPlayer] = useState<Player>();
     const [file, setFile] = useState<File>()
+
+    useEffect(() => {
+        GetExistingLists();
+    }, []);
+    const GetExistingLists = async () => {
+        const existingLists = await getFromLocalStorage<{ [code: string]: PlayerList }>(listsKey) ?? {};
+        const mine = existingLists["dhsdfsfbjkf"];
+        if (mine) { } else {
+            debugger;
+            importList(reparto as any);
+        }
+    }
 
     const addEditPlayer = (code?: string) => {
         if (code) {
@@ -75,24 +90,28 @@ const PlayerListDialog: FC<PlayerListDialogProps> = ({ open, onSave, handleClose
         setList(newList);
     }
 
+    const importList = (playerListImport: PlayerListImport) => {
+        let newList: PlayerList = { ...list, Code: list.Code !== "" ? list.Code : playerListImport.Code ? playerListImport.Code : "" };
+        if (playerListImport.DisplayName)
+            newList = { ...newList, DisplayName: playerListImport.DisplayName };
+        // await onChangeCode(playerListImport.DisplayName);
+        let newPlayers = { ...newList.Players }
+        for (let index = 0; index < playerListImport.Players.length; index++) {
+            const player = playerListImport.Players[index];
+            player.Code = player.Code ? player.Code : getRandomCode();
+            newPlayers[player.Code] = player;
+            // await onSavePlayer(player)
+        }
+        newList = { ...newList, Players: newPlayers };
+        setList(newList);
+    }
+
     const onFileChanged = async (newFile?: File) => {
         setFile(newFile);
         if (newFile) {
             const playerListImport = JSON.parse(await newFile.text()) as PlayerListImport;
             console.log(playerListImport);
-            let newList = { ...list };
-            if (playerListImport.DisplayName)
-                newList = { ...newList, DisplayName: playerListImport.DisplayName };
-            // await onChangeCode(playerListImport.DisplayName);
-            let newPlayers = { ...newList.Players }
-            for (let index = 0; index < playerListImport.Players.length; index++) {
-                const player = playerListImport.Players[index];
-                player.Code = player.Code ? player.Code : getRandomCode();
-                newPlayers[player.Code] = player;
-                // await onSavePlayer(player)
-            }
-            newList = { ...newList, Players: newPlayers };
-            setList(newList);
+            importList(playerListImport);
         }
     }
 
