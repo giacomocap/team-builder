@@ -212,7 +212,7 @@ const TeamMaker = ({ list }: TeamMakerProps) => {
                     nsquadWithoutRepetition[i] = squad;
                 }
             }
-            if (nsquadWithoutRepetition.every(t => t.length > 0) || nsquadWithoutRepetition.filter(t => t.length > 0).length >= femalehowManyOut) {
+            if (nsquadWithoutRepetition.every(t => t.length > 0) /*|| nsquadWithoutRepetition.filter(t => t.length > 0).length >= femalehowManyOut*/) {
                 femaleFound = true;
                 const longSquads = nsquadWithoutRepetition.map((e, i) => { return { i, length: e.length } }).filter(e => e.length === femaleForTeam + 1);
                 const shortSquads = nsquadWithoutRepetition.map((e, i) => { return { i, length: e.length } }).filter(e => e.length === femaleForTeam);
