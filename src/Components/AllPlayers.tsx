@@ -124,6 +124,7 @@ const AllPlayers: FC = () => {
     }
     const onDelete = async (list: PlayerList) => {
         setChecked(undefined);
+        setSelectedListDelete(undefined);
         const newLists = { ...existingLists };
         delete newLists[list.Code];
         await setInLocalStorage(listsKey, newLists);
